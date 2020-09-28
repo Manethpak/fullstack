@@ -1,0 +1,31 @@
+// Setting up the middleware
+
+const bodyParser = require('body-parser');
+const express = require('express');
+const cors = require('cors');
+
+const app = express();
+
+// Middleware
+
+app.use(bodyParser.json());
+app.use(cors());
+
+const tasks = require('./routes/api/tasklist');
+
+app.use('/api/tasklist', tasks);  //Route to tasklist.js
+
+// Handle production
+if(process.env.NODE_ENV === 'production') {
+    //static
+    app.use(express.static(__dirname + '/public/'));
+
+    // Single application
+    app.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));
+}
+
+const port = process.env.PORT || 5000;
+
+app.listen(port, () => console.log(`Server started on port ${port}`));
+
+
